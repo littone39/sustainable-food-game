@@ -88,6 +88,7 @@ menuScene.create = function() {
 gameScene.init = function() {
     this.playerSpeed = 3;
     this.playerScore = 0;
+    this.carbonScore = 0;
 }
 
 // load all the images 
@@ -123,7 +124,7 @@ gameScene.create = function() {
     this.steak = this.add.sprite(700,300,'steak');
     this.steak.setScale(.03);
     this.steak.movement = new PieceMovement(5);
-    //this.beepSound = this.sound.add('beep');
+    this.beepSound = this.sound.add('beep');
 
     this.apple = this.add.sprite(500,600,'apple');
     this.apple.setScale(.1);
@@ -135,10 +136,13 @@ gameScene.create = function() {
 
     //score
     gameScore = 0;
-    this.coinText = this.add.text(20, 15, "0", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.coinText = this.add.text(20, 15, "0", {fontSize: 20 });
     this.coinText.text = "" + gameScene.playerScore;
 
-    this.gameText = this.add.text(275,15, "Green Grocery Challenge ", {fontFamily: '"Serif"', fontSize: 40});
+    this.carbonText = this.add.text(20, 40, "0", {fontSize: 20 });
+    this.carbonText.text = "" + gameScene.carbonScore;
+
+    this.gameText = this.add.text(250,15, "Green Grocery Challenge ", {fontFamily: '"Serif"', fontSize: 20});
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
@@ -147,7 +151,7 @@ gameScene.create = function() {
     // 2:30 in seconds
     this.initialTime = 60;
 
-    text = this.add.text(32, 32, 'Countdown: ' + formatTime(this.initialTime));
+    text = this.add.text(650, 15, 'Countdown: ' + formatTime(this.initialTime));
 
     // Each 1000 ms call onEvent
     timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
@@ -183,15 +187,17 @@ gameScene.update = function(time, delta) {
 
     
     if(Phaser.Geom.Intersects.RectangleToRectangle(foodBounds,cartBounds)){
-        gameScene.playerScore += 1;
+        gameScene.playerScore += 3;
+        gameScene.carbonScore += 10;
         this.steak.y -= 480;
         this.steak.x = getRndInteger(0,800);
         if(gameScene.playerScore > gameScore){
             gameScore = gameScene.playerScore;
             
         }
+        //if carbon score is more than x add a box to the thing (like green yellow red)
         
-        //gameScene.chompSound.play();
+        gameScene.beepSound.play();
         console.log('ladybug eats!');
         //play a sound
     }
@@ -203,23 +209,18 @@ gameScene.update = function(time, delta) {
             gameScore = gameScene.playerScore;
             
         }
+        gameScene.beepSound.play();
         
-        //gameScene.chompSound.play();
-        console.log('ladybug eats!');
-        //play a sound
     }
     if(Phaser.Geom.Intersects.RectangleToRectangle(brocBounds,cartBounds)){
         gameScene.playerScore += 1;
         this.broccoli.y -= 480;
         this.broccoli.x = getRndInteger(0,800);
         if(gameScene.playerScore > gameScore){
-            gameScore = gameScene.playerScore;
-            
+            gameScore = gameScene.playerScore; 
         }
-        
-        //gameScene.chompSound.play();
-        console.log('ladybug eats!');
-        //play a sound
+
+        gameScene.beepSound.play();
     }
 
     //move gamepieces 
@@ -246,25 +247,22 @@ gameScene.update = function(time, delta) {
     }
 
     //display score
-    this.coinText.text = "Score:" + gameScene.playerScore;
-    //this.carbonText.text = "Carbon footprint:" + gameScene.carbonScore;
+    this.coinText.text = "Food energy:" + gameScene.playerScore + "/20";
+    this.carbonText.text = "Carbon footprint:" + gameScene.carbonScore;
 
-    /*
-    if(gameScene.playerScore < 0){
+
+    if (gameScene.initialTime < 0){
+        //change the words to game over, you didn't collect enough food in time, try again
         gameScene.scene.start(gameOverScene);
-        //gameScene.restart();
+    }else if(gameScene.playerScore > 19){
+        //change the words to you won! you collected enough food to move on
+        //update amount of cows 
+        gameScene.scene.start(gameOverScene);
     }
-
-    if((gameScene.playerScore/100 + 3) > this.food.movement.horizontalSpeed){
-        this.poison.movement.horizontalSpeed += getRndInteger(0,1);
-        this.food.movement.horizontalSpeed += getRndInteger(0,1);
     }
-    */
-        
-    //}
-    //game.physics.arcade.collide(emitter);
+    
 
-}
+
 
 gameScene.restart = function() {
     console.log('ladybug dies and is reborn again');
