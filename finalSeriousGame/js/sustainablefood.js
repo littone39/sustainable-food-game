@@ -8,6 +8,8 @@ PieceMovement = class {
     }
 }
 
+//adding some comments for git
+
 //create new scene
 let gameScene = new Phaser.Scene('Game');
 let menuScene = new Phaser.Scene('Menu');
