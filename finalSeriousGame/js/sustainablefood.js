@@ -103,6 +103,9 @@ gameScene.preload = function() {
     //this.load.spritesheet('veggies', 'assets/sprites.png',32,37);
 }
 
+var text;
+var timedEvent;
+
 gameScene.create = function() {
     //background grass
     this.background = this.add.sprite(0,0, 'blue');
@@ -138,6 +141,16 @@ gameScene.create = function() {
     this.gameText = this.add.text(275,15, "Green Grocery Challenge ", {fontFamily: '"Serif"', fontSize: 40});
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
+
+    //timer
+    console.log('create');
+    // 2:30 in seconds
+    this.initialTime = 60;
+
+    text = this.add.text(32, 32, 'Countdown: ' + formatTime(this.initialTime));
+
+    // Each 1000 ms call onEvent
+    timedEvent = this.time.addEvent({ delay: 1000, callback: onEvent, callbackScope: this, loop: true });
 };
 
 gameScene.update = function(time, delta) {
@@ -270,24 +283,6 @@ gameOverScene.create = function(){
     this.background.setOrigin(0,0);
     this.background.displayHeight = config.height;
     this.background.displayWidth = config.width;
-/*
-    balls = this.physics.add.group({
-        key: ['blue', 'black', 'bug'],
-        repeat: 13,
-        setXY: { x: 12, y: 0, stepX: 50 }
-    });
-
-    balls.children.iterate(function (child) {
-
-        child.setBounceY(Phaser.Math.FloatBetween(0.5, 0.9));
-
-    });
-
-    platforms = this.physics.add.staticGroup();
-    platforms.create(420, 760, 'grass').setScale(3).refreshBody();
-    
-    this.physics.add.collider(balls, platforms);
-*/
 
     this.gameOverText = this.add.text(270, 50, "GAME OVER", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     
@@ -410,6 +405,24 @@ function resetItemState(item){
         item.hoverTweenIn.remove();
         
     }
+}
+
+function formatTime(seconds){
+    // Minutes
+    var minutes = Math.floor(seconds/60);
+    // Seconds
+    var partInSeconds = seconds%60;
+    // Adds left zeros to seconds
+    partInSeconds = partInSeconds.toString().padStart(2,'0');
+    // Returns formated time
+    return `${minutes}:${partInSeconds}`;
+}
+
+
+function onEvent ()
+{
+    this.initialTime -= 1; // One second
+    text.setText('Countdown: ' + formatTime(this.initialTime));
 }
 
 
