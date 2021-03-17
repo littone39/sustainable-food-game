@@ -59,8 +59,8 @@ preloadScene.create = function(){
 //menu scene images 
 menuScene.preload = function(){
     this.load.image('play', "assets/playbutton.png");
-    this.load.image('background', 'assets/grocery.png');
-    this.load.image('cart', 'assets/shoppingtrolley.png');
+    this.load.image('background', 'assets/bluesky.jpg');
+    this.load.image('foodcart', 'assets/foodcart.png');
 }
 
 
@@ -70,10 +70,12 @@ menuScene.create = function() {
     this.background.displayHeight = config.height;
     this.background.displayWidth = config.width;
     
-    this.gameText = this.add.text(275,15, "Cloudy with a Chance of Climate Change", {fontFamily: '"Serif"', fontSize: 40, color: 111111});
-    this.cart = this.add.sprite(150,50, 'cart');
-    this.cart.setScale(.2);
-    this.playButton = this.add.sprite(400, 320, 'play');
+    this.gameText = this.add.text(70,15, "Cloudy with a Chance of Climate Change", {fontFamily: '"Fantasy"', fontSize: 40, color: 111111});
+    this.foodcart = this.add.sprite(200,250, 'foodcart');
+    this.foodcart.setScale(.15);
+    this.cart2 = this.add.sprite(600,250, 'foodcart');
+    this.cart2.setScale(.15);
+    this.playButton = this.add.sprite(400, 220, 'play');
     this.playButton.setScale(.5);
     makeInteractive(this.playButton, function(){
         menuScene.scene.start(gameScene);
@@ -150,7 +152,7 @@ gameScene.create = function() {
     //timer
     console.log('create');
     // 2:30 in seconds
-    this.initialTime = 60;
+    this.initialTime = 30;
 
     text = this.add.text(650, 15, 'Countdown: ' + formatTime(this.initialTime));
 
@@ -256,7 +258,7 @@ gameScene.update = function(time, delta) {
 
     if (gameScene.initialTime < 0){
         //change the words to game over, you didn't collect enough food in time, try again
-        endGameText = "Game Over"
+        endGameText = "Game Over... you didn't collect enough food in time"
         gameScene.scene.start(gameOverScene);
     
     }else if(gameScene.playerScore > 19){
@@ -290,14 +292,14 @@ gameOverScene.create = function(){
     this.background.displayHeight = config.height;
     this.background.displayWidth = config.width;
 
-    this.gameOverText = this.add.text(270, 50, endGameText, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.gameOverText = this.add.text(150, 50, endGameText, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     
-    this.playAgainText = this.add.text(300, 100, "play again", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
-    this.scoreText = this.add.text(280, 350, "You killed " + Math.floor(gameScene.carbonScore/4)+1 +" cows ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
-    this.carbonEmissionText = this.add.text(120, 390, "And emitted " + gameScene.carbonScore +" kg of carbon ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.playAgainText = this.add.text(300, 100, "try again", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.scoreText = this.add.text(280, 350, "You killed " + Math.floor(Math.floor(gameScene.carbonScore)/180) +" cows ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.carbonEmissionText = this.add.text(120, 390, "And emitted " + Math.floor(gameScene.carbonScore) +" kg of carbon ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     this.cow = this.add.sprite(220, 370, 'cow');
     this.cow.setScale(.08);
-    this.rednot = this.add.sprite(650,370,'rednot');
+    this.rednot = this.add.sprite(625,370,'rednot');
     this.rednot.setScale(.01);
     //this.highScoreText = this.add.text(280, 390, "Carbon footprint:" + carbonScore, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     this.restartButton = this.add.sprite(380, 250, 'restart');
