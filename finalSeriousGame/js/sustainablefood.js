@@ -4,7 +4,7 @@ PieceMovement = class {
 
     constructor(vert){
         this.horizontalSpeed = 3;
-        this.verticalSpeed = 30;
+        this.verticalSpeed = 100;
     }
 }
 
@@ -86,7 +86,7 @@ menuScene.create = function() {
 
 //init scene parameters?
 gameScene.init = function() {
-    this.playerSpeed = 3;
+    this.playerSpeed = 4.5;
     this.playerScore = 0;
     this.carbonScore = 0;
 }
@@ -105,6 +105,7 @@ gameScene.preload = function() {
 }
 
 var text;
+var endGameText = "";
 var timedEvent;
 
 gameScene.create = function() {
@@ -142,7 +143,7 @@ gameScene.create = function() {
     this.carbonText = this.add.text(20, 40, "0", {fontSize: 20 });
     this.carbonText.text = "" + gameScene.carbonScore;
 
-    this.gameText = this.add.text(250,15, "Green Grocery Challenge ", {fontFamily: '"Serif"', fontSize: 20});
+    //this.gameText = this.add.text(250,15, "Green Grocery Challenge ", {fontFamily: '"Serif"', fontSize: 20});
 
     this.cursorKeys = this.input.keyboard.createCursorKeys();
 
@@ -188,7 +189,7 @@ gameScene.update = function(time, delta) {
     
     if(Phaser.Geom.Intersects.RectangleToRectangle(foodBounds,cartBounds)){
         gameScene.playerScore += 3;
-        gameScene.carbonScore += 10;
+        gameScene.carbonScore += 60;
         this.steak.y -= 480;
         this.steak.x = getRndInteger(0,800);
         if(gameScene.playerScore > gameScore){
@@ -203,6 +204,7 @@ gameScene.update = function(time, delta) {
     }
     if(Phaser.Geom.Intersects.RectangleToRectangle(appleBounds,cartBounds)){
         gameScene.playerScore += 1;
+        gameScene.carbonScore += .4;
         this.apple.y -= 480;
         this.apple.x = getRndInteger(0,800);
         if(gameScene.playerScore > gameScore){
@@ -214,6 +216,7 @@ gameScene.update = function(time, delta) {
     }
     if(Phaser.Geom.Intersects.RectangleToRectangle(brocBounds,cartBounds)){
         gameScene.playerScore += 1;
+        gameScene.carbonScore += .4;
         this.broccoli.y -= 480;
         this.broccoli.x = getRndInteger(0,800);
         if(gameScene.playerScore > gameScore){
@@ -253,10 +256,13 @@ gameScene.update = function(time, delta) {
 
     if (gameScene.initialTime < 0){
         //change the words to game over, you didn't collect enough food in time, try again
+        endGameText = "Game Over"
         gameScene.scene.start(gameOverScene);
+    
     }else if(gameScene.playerScore > 19){
         //change the words to you won! you collected enough food to move on
-        //update amount of cows 
+        //display dead cow on screen 
+        endGameText = "Level up! ... but at what cost?"
         gameScene.scene.start(gameOverScene);
     }
     }
@@ -273,6 +279,8 @@ gameOverScene.preload = function(){
     this.load.image('restart', "assets/restart.png");
     this.load.image('blue', 'assets/blue.png');
     this.load.image('cart', 'assets/cart.png');
+    this.load.image('cow', 'assets/cow.png');
+    this.load.image('rednot','assets/rednot.png')
     
 }
 
@@ -282,10 +290,15 @@ gameOverScene.create = function(){
     this.background.displayHeight = config.height;
     this.background.displayWidth = config.width;
 
-    this.gameOverText = this.add.text(270, 50, "GAME OVER", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.gameOverText = this.add.text(270, 50, endGameText, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     
     this.playAgainText = this.add.text(300, 100, "play again", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
-    this.scoreText = this.add.text(325, 350, "Your score:" + gameScore, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.scoreText = this.add.text(280, 350, "You killed " + Math.floor(gameScene.carbonScore/4)+1 +" cows ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.carbonEmissionText = this.add.text(120, 390, "And emitted " + gameScene.carbonScore +" kg of carbon ", { fontFamily: '"Roboto Condensed"', fontSize: 40 });
+    this.cow = this.add.sprite(220, 370, 'cow');
+    this.cow.setScale(.08);
+    this.rednot = this.add.sprite(650,370,'rednot');
+    this.rednot.setScale(.01);
     //this.highScoreText = this.add.text(280, 390, "Carbon footprint:" + carbonScore, { fontFamily: '"Roboto Condensed"', fontSize: 40 });
     this.restartButton = this.add.sprite(380, 250, 'restart');
     this.restartButton.setScale(.5);
